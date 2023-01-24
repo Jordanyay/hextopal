@@ -6,9 +6,8 @@ Hextopal is a Bash script born from the inconvenience experienced from going bac
 ### What's up with the project name?
 "Hextopal" is a concatenation of the original project name "hex-to-palette", which makes the project more memorable and interesting sounding compared to the former. Thanks to my accent, I pronounce the name of this project as "hecks-toe-pull", but please feel free to pronounce it however you'd like.
 
-## My goals for this script
+## Goals and constraints
 Below is a list of goals and constraints for this script and what I want to achieve:
-#### Goals and constraints:
 - [ ] Create an "object" system which uses arrays to store variables.
 - [ ] Automatically convert an inputted hexadecimal RGB value into a decimal RGB value.
 - [ ] Create color blocks which display both hexadecimal and decimal RGB values with the block being the actual color itself.

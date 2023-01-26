@@ -31,7 +31,7 @@ main() {
 
 hue-shift() {
   SHIFT=0
-  for FUCK in "${HUE_LOOP[@]}"; do
+  for NICE_WORD in "${HUE_LOOP[@]}"; do
     case "$SHIFT" in
       0  ) RN=$R GN=$G BN=$B ;;
       60 ) RN=$R GN=$R BN=$B ;;

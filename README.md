@@ -8,8 +8,8 @@ Hextopal is a Bash script born from the inconvenience experienced from going bac
 
 ## Goals and constraints
 Below is a list of goals and constraints for this script and what I want to achieve:
-- [ ] Create an "object" system which uses arrays to store variables.
-- [ ] Automatically convert an inputted hexadecimal RGB value into a decimal RGB value.
+- [ ] ~Create an "object" system which uses arrays to store variables.~
+- [x] Automatically convert an inputted hexadecimal RGB value into a decimal RGB value.
 - [ ] Create color blocks which display both hexadecimal and decimal RGB values with the block being the actual color itself.
 - [ ] Automatically generate a color palette from 1 inputted hexadecimal RGB value (hue shifting).
 - [ ] Automatically generate 4 steps of lighter tones from the generated color palette (brightness increase).

@@ -1,15 +1,15 @@
 #!/bin/bash
 
-grab() {
+prop-get() {
   case "$1" in
-    DAR) printf '%s\n' "${DAR[$2]}" ;;
-    RED) printf '%s\n' "${RED[$2]}" ;;
-    YEL) printf '%s\n' "${YEL[$2]}" ;;
-    GRE) printf '%s\n' "${GRE[$2]}" ;;
-    CYA) printf '%s\n' "${CYA[$2]}" ;;
-    BLU) printf '%s\n' "${BLU[$2]}" ;;
-    MAG) printf '%s\n' "${MAG[$2]}" ;;
-    LIG) printf '%s\n' "${LIG[$2]}" ;;
+    BLA) printf "${BLA[$2]}" ;;
+    RED) printf "${RED[$2]}" ;;
+    YEL) printf "${YEL[$2]}" ;;
+    GRE) printf "${GRE[$2]}" ;;
+    CYA) printf "${CYA[$2]}" ;;
+    BLU) printf "${BLU[$2]}" ;;
+    MAG) printf "${MAG[$2]}" ;;
+    WHI) printf "${WHI[$2]}" ;;
   esac
 }
 
@@ -17,18 +17,18 @@ grab() {
 # Initial HEX to RGB #
 ######################
 
-for RGB_LOOP_INDEX in {0..2}; do
+for i in {0..2}; do
   INDEX=0
-  case "$RGB_LOOP_INDEX" in
+  case "$i" in
     0) RGB=R IN0=${1:0:1} IN1=${1:1:1} ;;
     1) RGB=G IN0=${1:2:1} IN1=${1:3:1} ;;
     2) RGB=B IN0=${1:4:1} IN1=${1:5:1} ;;
   esac
-  for HEX_INDEX in {0..9} {a..f}; do
-    if [ "$HEX_INDEX" = "$IN0" ]; then
+  for i in {0..9} {a..f}; do
+    if [ "$i" = "$IN0" ]; then
       OUT0=$(($INDEX*16))
     fi
-    if [ "$HEX_INDEX" = "$IN1" ]; then
+    if [ "$i" = "$IN1" ]; then
       OUT1=$INDEX
     fi
     ((INDEX++))
@@ -40,14 +40,14 @@ done
 # Base hue shifts #
 ###################
 
-for HUE_SHIFT in {0..300..60}; do
-  case "$HUE_SHIFT" in
-    0  ) declare -A RED=([NAME]=Red     [HEX]=000000 [RGB]="$R $G $B" [R]=$R [G]=$G [B]=$B) ;;
-    60 ) declare -A YEL=([NAME]=Yellow  [HEX]=000000 [RGB]="$R $R $B" [R]=$R [G]=$R [B]=$B) ;;
-    120) declare -A GRE=([NAME]=Green   [HEX]=000000 [RGB]="$B $R $B" [R]=$B [G]=$R [B]=$B) ;;
-    180) declare -A CYA=([NAME]=Cyan    [HEX]=000000 [RGB]="$B $R $R" [R]=$B [G]=$R [B]=$R) ;;
-    240) declare -A BLU=([NAME]=Blue    [HEX]=000000 [RGB]="$G $G $R" [R]=$G [G]=$G [B]=$R) ;;
-    300) declare -A MAG=([NAME]=Magenta [HEX]=000000 [RGB]="$R $G $R" [R]=$R [G]=$G [B]=$R) ;;
+for i in {0..300..60}; do
+  case "$i" in
+    0  ) declare -A RED=([NAME]=Red     [HEX]=$H [RGB]="$R $G $B" [R]=$R [G]=$G [B]=$B) ;;
+    60 ) declare -A YEL=([NAME]=Yellow  [HEX]=$H [RGB]="$R $R $B" [R]=$R [G]=$R [B]=$B) ;;
+    120) declare -A GRE=([NAME]=Green   [HEX]=$H [RGB]="$B $R $B" [R]=$B [G]=$R [B]=$B) ;;
+    180) declare -A CYA=([NAME]=Cyan    [HEX]=$H [RGB]="$B $R $R" [R]=$B [G]=$R [B]=$R) ;;
+    240) declare -A BLU=([NAME]=Blue    [HEX]=$H [RGB]="$G $G $R" [R]=$G [G]=$G [B]=$R) ;;
+    300) declare -A MAG=([NAME]=Magenta [HEX]=$H [RGB]="$R $G $R" [R]=$R [G]=$G [B]=$R) ;;
   esac
 done
 
@@ -55,73 +55,66 @@ done
 # Initial RGB to B&W #
 ######################
 
-GREYR=$(($(grab RED R)*1000))
-GREYG=$(($(grab RED G)*1000))
-GREYB=$(($(grab RED B)*1000))
+GREYR=$(($(prop-get RED R)*1000))
+GREYG=$(($(prop-get RED G)*1000))
+GREYB=$(($(prop-get RED B)*1000))
 
 GREYR=$(($GREYR*299))
 GREYG=$(($GREYG*587))
 GREYB=$(($GREYB*114))
 
-case "$(printf $GREYR | wc -m)" in
-  7) if [ "${GREYR:1:1}" -ge '5' ]; then
-       GREYR=$(printf "$GREYR" | cut -b 1) GREYR=$(($GREYR+1))
-     else
-       GREYR=$(printf "$GREYR" | cut -b 1)
-     fi ;;
-  8) if [ "${GREYR:2:1}" -ge '5' ]; then
-       GREYR=$(printf "$GREYR" | cut -b 1-2) GREYR=$(($GREYR+1))
-     else
-       GREYR=$(printf "$GREYR" | cut -b 1-2)
-     fi ;;
-  9) if [ "${GREYR:3:1}" -ge '5' ]; then
-       GREYR=$(printf "$GREYR" | cut -b 1-3) GREYR=$(($GREYR+1))
-     else
-       GREYR=$(printf "$GREYR" | cut -b 1-3)
-     fi ;;
-esac
+for i in $GREYR $GREYG $GREYB; do
+  case $i in
+    $GREYR) foo=GREYR ;;
+    $GREYG) foo=GREYG ;;
+    $GREYB) foo=GREYB ;;
+  esac
+  case "$(printf $i | wc -m)" in
+    7) if [ "${i:1:1}" -ge '5' ]; then
+         export $foo=$(printf "$i" | cut -b 1)
+         export $foo=$(($foo+1))
+       else
+         export $foo=$(printf "$i" | cut -b 1)
+       fi ;;
+    8) if [ "${i:2:1}" -ge '5' ]; then
+         export $foo=$(printf "$i" | cut -b 1-2) 
+         export $foo=$(($foo+1))
+       else
+         export $foo=$(printf "$i" | cut -b 1-2)
+       fi ;;
+    9) if [ "${i:3:1}" -ge '5' ]; then
+         export $foo=$(printf "$i" | cut -b 1-3)
+         export $foo=$(($foo+1))
+       else
+         export $foo=$(printf "$i" | cut -b 1-3)
+       fi ;;
+  esac
+done
 
-case "$(printf $GREYG | wc -m)" in
-  7) if [ "${GREYG:1:1}" -ge '5' ]; then
-       GREYG=$(printf "$GREYG" | cut -b 1) GREYG=$(($GREYG+1))
-     else
-       GREYG=$(printf "$GREYG" | cut -b 1)
-     fi ;;
-  8) if [ "${GREYG:2:1}" -ge '5' ]; then
-       GREYG=$(printf "$GREYG" | cut -b 1-2) GREYG=$(($GREYG+1))
-     else
-       GREYG=$(printf "$GREYG" | cut -b 1-2)
-     fi ;;
-  9) if [ "${GREYG:3:1}" -ge '5' ]; then
-       GREYG=$(printf "$GREYG" | cut -b 1-3) GREYG=$(($GREYG+1))
-     else
-       GREYG=$(printf "$GREYG" | cut -b 1-3)
-     fi ;;
-esac
+if [ "$GREYR" -ge "$GREYG" ] && [ "$GREYR" -ge "$GREYB" ]; then
+  GREY=$GREYR
+elif [ "$GREYG" -ge "$GREYB" ]; then
+  GREY=$GREYG
+else
+  GREY=$GREYB
+fi
 
-case "$(printf $GREYB | wc -m)" in
-  7) if [ "${GREYB:1:1}" -ge '5' ]; then
-       GREYB=$(printf "$GREYB" | cut -b 1) GREYB=$(($GREYB+1))
-     else
-       GREYB=$(printf "$GREYB" | cut -b 1)
-     fi ;;
-  8) if [ "${GREYB:2:1}" -ge '5' ]; then
-       GREYB=$(printf "$GREYB" | cut -b 1-2) GREYB=$(($GREYB+1))
-     else
-       GREYB=$(printf "$GREYB" | cut -b 1-2)
-     fi ;;
-  9) if [ "${GREYB:3:1}" -ge '5' ]; then
-       GREYB=$(printf "$GREYB" | cut -b 1-3) GREYB=$(($GREYB+1))
-     else
-       GREYB=$(printf "$GREYB" | cut -b 1-3)
-     fi ;;
-esac
+DAR=$((0+(($GREYR+$GREYG+GREYB)/3)))
+LIG=$((255-(($GREYR+$GREYG+GREYB)/3)))
 
-GREY_SUM=$(($GREYR+$GREYG+$GREYB))
+if [ "$DAR" -le 0 ]; then
+  DAR=0
+fi
+if [ "$LIG" -ge 255 ]; then
+  LIG=255
+fi
 
-printf '%s\n' "$(grab RED RGB)"
+declare -A BLA=([NAME]=Black [HEX]=$H [RGB]="$DAR $DAR $DAR" [R]=$DAR [G]=$DAR [B]=$DAR)
+declare -A WHI=([NAME]=White [HEX]=$H [RGB]="$LIG $LIG $LIG" [R]=$LIG [G]=$LIG [B]=$LIG)
+
+printf '%s\n' "$(prop-get RED RGB)"
 printf '%s\n' "$GREYR $GREYG $GREYB"
-printf '%s\n' "$(($GREYR+$GREYG+$GREYB))"
+printf '%s\n' "${BLA[RGB]} ${WHI[RGB]}"
 
 ##################
 # Block printing #
@@ -133,14 +126,16 @@ print-blank() {
   blank() {
     printf "\e[48;2;$1;$2;${3}m$WIDTH\e[0m"
   }
-  blank $(grab RED RGB)
-  blank $(grab YEL RGB)
-  blank $(grab GRE RGB)
-  blank $(grab CYA RGB)
-  blank $(grab BLU RGB)
-  blank $(grab MAG RGB)
+  blank $(prop-get BLA RGB)
+  blank $(prop-get RED RGB)
+  blank $(prop-get YEL RGB)
+  blank $(prop-get GRE RGB)
+  blank $(prop-get CYA RGB)
+  blank $(prop-get BLU RGB)
+  blank $(prop-get MAG RGB)
+  blank $(prop-get WHI RGB)
   printf '\n'
-  blank $GREY_SUM $GREY_SUM $GREY_SUM
+  blank $GREY $GREY $GREY
   printf '\n'
 }
 

@@ -99,8 +99,19 @@ else
   GREY=$GREYB
 fi
 
-DAR=$((0+(($GREYR+$GREYG+GREYB)/3)))
-LIG=$((255-(($GREYR+$GREYG+GREYB)/3)))
+black-calculator() {
+  local MAX=$(printf '%s\n' "$(prop-get RED R)" "$(prop-get RED G)" "$(prop-get RED B)" | sort -n | tail -n 1)
+  local MIN=$(printf '%s\n' "$(prop-get RED R)" "$(prop-get RED G)" "$(prop-get RED B)" | sort -n | head -n 1)
+  printf '%s\n' "$((($MAX*$MIN)/1000))"
+}
+
+white-calculator() {
+  local MAX=$(printf '%s\n' "$(prop-get RED R)" "$(prop-get RED G)" "$(prop-get RED B)" | sort -n | tail -n 1)
+  printf '%s\n' "$MAX"
+}
+
+DAR=$(black-calculator)
+LIG=$(white-calculator)
 
 if [ "$DAR" -le 0 ]; then
   DAR=0
@@ -112,9 +123,15 @@ fi
 declare -A BLA=([NAME]=Black [HEX]=$H [RGB]="$DAR $DAR $DAR" [R]=$DAR [G]=$DAR [B]=$DAR)
 declare -A WHI=([NAME]=White [HEX]=$H [RGB]="$LIG $LIG $LIG" [R]=$LIG [G]=$LIG [B]=$LIG)
 
+printf '%s\n' "$(prop-get BLA RGB)"
 printf '%s\n' "$(prop-get RED RGB)"
-printf '%s\n' "$GREYR $GREYG $GREYB"
-printf '%s\n' "${BLA[RGB]} ${WHI[RGB]}"
+printf '%s\n' "$(prop-get YEL RGB)"
+printf '%s\n' "$(prop-get GRE RGB)"
+printf '%s\n' "$(prop-get CYA RGB)"
+printf '%s\n' "$(prop-get BLU RGB)"
+printf '%s\n' "$(prop-get MAG RGB)"
+printf '%s\n' "$(prop-get WHI RGB)"
+#printf '%s\n' "$GREYR $GREYG $GREYB"
 
 ##################
 # Block printing #
@@ -135,6 +152,7 @@ print-blank() {
   blank $(prop-get MAG RGB)
   blank $(prop-get WHI RGB)
   printf '\n'
+  blank $(prop-get BLA RGB)
   blank $GREY $GREY $GREY
   printf '\n'
 }
